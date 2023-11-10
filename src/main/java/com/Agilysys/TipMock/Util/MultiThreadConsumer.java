@@ -1,6 +1,6 @@
 package com.Agilysys.TipMock.Util;
 
-import com.Agilysys.TipMock.KafKaProperties.KafkaProperties;
+import com.Agilysys.TipMock.Properties.KafkaProperties;
 import org.apache.avro.Schema;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -44,7 +44,7 @@ public class MultiThreadConsumer implements Runnable {
                 AvroHelper avroHelper = new AvroHelper();
                 Schema avroSchema = null;
                 try {
-                    avroSchema = new Schema.Parser().parse(new File("C:\\kafkaCli\\avro-cli\\src\\main\\java\\io\\github\\rkluszczynski\\avro\\cli\\command\\conversion\\schema.avsc"));
+                    avroSchema = new Schema.Parser().parse(new File("C:\\kafkaCli\\avro-cli\\src\\main\\java\\io\\github\\rkluszczynski\\avro\\cli\\command\\conversion\\night_audit.avsc"));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

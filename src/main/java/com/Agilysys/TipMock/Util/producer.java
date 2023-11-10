@@ -29,7 +29,7 @@ public class producer {
         // Define the Kafka topic
         String topic = "night_audit";
         JsonAvroConverter jsonAvroConverter=new JsonAvroConverter();
-        Schema avroSchema = new Schema.Parser().parse(new File("C:\\kafkaCli\\avro-cli\\src\\main\\java\\io\\github\\rkluszczynski\\avro\\cli\\command\\conversion\\schema.avsc"));
+        Schema avroSchema = new Schema.Parser().parse(new File("C:\\kafkaCli\\avro-cli\\src\\main\\java\\io\\github\\rkluszczynski\\avro\\cli\\command\\conversion\\night_audit.avsc"));
         InputStream inputStream=new FileInputStream("C:\\kafkaCli\\avro-cli\\src\\main\\java\\io\\github\\rkluszczynski\\avro\\cli\\command\\conversion\\input.json");
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte[] avro;

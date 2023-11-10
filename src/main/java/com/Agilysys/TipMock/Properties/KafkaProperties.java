@@ -1,21 +1,27 @@
-package com.Agilysys.TipMock.KafKaProperties;
+package com.Agilysys.TipMock.Properties;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 public final class KafkaProperties {
     public static Properties kafkaProducerWithAvro(){
+        Properties prop=ApplicationProperties.getProperties();
         Properties properties=new Properties();
+        properties.setProperty("sasl.jaas.config",prop.getProperty("sasl.jaas.config"));
         properties.setProperty("key.serializer","org.apache.kafka.common.serialization.StringSerializer");
         properties.setProperty("value.serializer","org.apache.kafka.common.serialization.ByteArraySerializer");
         properties.setProperty("sasl.mechanism","PLAIN");
         properties.setProperty("security.protocol","SASL_SSL");
         properties.setProperty("basic.auth.credentials.source","USER_INFO");
-        properties.setProperty("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username=\"TT6AVYAXJH7ZXTTD\" password=\"ehVQiRt54cY88NoZFllsr5G55nPBBbmwn7OOB4mqOcWWOVxiQJcYmNFhxlwR6il9\";");
-        properties.setProperty("bootstrap.servers","pkc-ldvmy.centralus.azure.confluent.cloud:9092");
+        properties.setProperty("bootstrap.servers",prop.getProperty("bootstrapServer"));
         properties.setProperty("ssl.endpoint.identification.algorithm","https");
         return properties;
     }
     public static Properties kafkaConsumerWithAvro(){
+        Properties prop=ApplicationProperties.getProperties();
         Properties properties=new Properties();
         properties.setProperty("group.id","consumer1");
         properties.setProperty("key.deserializer","org.apache.kafka.common.serialization.StringDeserializer");
@@ -23,8 +29,8 @@ public final class KafkaProperties {
         properties.setProperty("sasl.mechanism","PLAIN");
         properties.setProperty("security.protocol","SASL_SSL");
         properties.setProperty("basic.auth.credentials.source","USER_INFO");
-        properties.setProperty("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username=\"TT6AVYAXJH7ZXTTD\" password=\"ehVQiRt54cY88NoZFllsr5G55nPBBbmwn7OOB4mqOcWWOVxiQJcYmNFhxlwR6il9\";");
-        properties.setProperty("bootstrap.servers","pkc-ldvmy.centralus.azure.confluent.cloud:9092");
+        properties.setProperty("sasl.jaas.config",prop.getProperty("sasl.jaas.config"));
+        properties.setProperty("bootstrap.servers",prop.getProperty("bootstrapServer"));
         properties.setProperty("ssl.endpoint.identification.algorithm","https");
         return properties;
     }

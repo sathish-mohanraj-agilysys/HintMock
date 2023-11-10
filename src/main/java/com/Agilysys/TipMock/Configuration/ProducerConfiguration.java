@@ -1,8 +1,7 @@
 package com.Agilysys.TipMock.Configuration;
 
-import com.Agilysys.TipMock.KafKaProperties.KafkaProperties;
+import com.Agilysys.TipMock.Properties.KafkaProperties;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
