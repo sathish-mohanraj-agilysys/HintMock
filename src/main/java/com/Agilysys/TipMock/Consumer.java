@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.Properties;
 
 public class Consumer {
-    public static void start() throws IOException {
+    public static void startAvro() throws IOException {
         Properties appProp = ApplicationProperties.getProperties();
         Properties kafkaProp = KafkaProperties.kafkaProducerWithAvro();
         // Create a Kafka producer
@@ -58,6 +58,45 @@ public class Consumer {
                     wiremockOut.setKafkaHeader(record.headers().toString());
                     wiremockOut.setPayload(outputStream.toString());
 
+                    System.out.println(new Gson().toJson(wiremockOut));
+                    StringEntity entity = new StringEntity(new Gson().toJson(wiremockOut));
+
+                    entity.setContentType("application/json");
+                    request.setEntity(entity);
+                    HttpResponse response = httpClient.execute(request);
+                    String responseBody = EntityUtils.toString(response.getEntity());
+                    System.out.println("Message from the wireMock" + responseBody);
+                    WiremockDTO wiremockDTO = new ObjectMapper().readValue(responseBody, WiremockDTO.class);
+                    if (wiremockDTO.getTopic() != null) producerUtil.produceAvro(responseBody);
+                }
+            } catch (Exception e) {
+                System.out.println("Exception in the consumption of the message"+e.getMessage());
+
+            }
+
+        }
+    }
+    public static void startJson() throws IOException {
+        Properties appProp = ApplicationProperties.getProperties();
+        Properties kafkaProp = KafkaProperties.kafkaProducerWithJSON();
+        // Create a Kafka producer
+        KafkaProducer<String, String> producer = new KafkaProducer<>(kafkaProp);
+        ProducerUtil producerUtil = new ProducerUtil();
+        String topicName = "hotel-ops.property-financials.pms-agilysys.night-audit-events";
+        Properties props = KafkaProperties.kafkaConsumerWithJSON();
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+        consumer.subscribe(Collections.singletonList(topicName));
+
+        while (true) {
+            try {
+                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+
+                for (ConsumerRecord<String, String> record : records) {
+                    HttpClient httpClient = HttpClients.createDefault();
+                    HttpPost request = new HttpPost(appProp.getProperty("wiremockUrl") + "/" + topicName);
+                    WiremockDTO wiremockOut = new WiremockDTO();
+                    wiremockOut.setKafkaHeader(record.headers().toString());
+                    wiremockOut.setPayload(record.value());
                     System.out.println(new Gson().toJson(wiremockOut));
                     StringEntity entity = new StringEntity(new Gson().toJson(wiremockOut));
 

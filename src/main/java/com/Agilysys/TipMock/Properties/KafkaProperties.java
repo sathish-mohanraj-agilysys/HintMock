@@ -19,7 +19,7 @@ public final class KafkaProperties {
     public static Properties kafkaConsumerWithAvro(){
         Properties prop=ApplicationProperties.getProperties();
         Properties properties=new Properties();
-        properties.setProperty("group.id","consumer1");
+        properties.setProperty("group.id","consumer11");
         properties.setProperty("key.deserializer","org.apache.kafka.common.serialization.StringDeserializer");
         properties.setProperty("value.deserializer","org.apache.kafka.common.serialization.ByteArrayDeserializer");
         properties.setProperty("sasl.mechanism","PLAIN");

@@ -1,0 +1,123 @@
+{
+  "name": "NightAudit",
+  "namespace": "com.marriott.mmf",
+  "doc": "This entity will contain multiple information e.g. NA part, hotel date etc.",
+  "type": "record",
+  "fields": [
+    {
+      "name": "propertyCode",
+      "doc": "The property Identifier that uniquely identifies the property in the Marriott ecosystem",
+      "type": "string"
+    },
+    {
+      "name": "pmsTypeCode",
+      "doc": "An identifier for the type of property management system from which the objects originated.",
+      "type": "string"
+    },
+    {
+      "name": "agentId",
+      "doc": "Agent or System That started the Night Audit Phase",
+      "type": {
+        "name": "AgentInformation",
+        "namespace": "com.marriott.mmf",
+        "type": "record",
+        "fields": [
+          {
+            "name": "agentId",
+            "doc": "Agent ID",
+            "type": "string"
+          },
+          {
+            "default": null,
+            "name": "firstName",
+            "doc": "Agent first name",
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          {
+            "default": null,
+            "name": "middleName",
+            "doc": "Agent middle name",
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          {
+            "name": "lastName",
+            "doc": "Agent last name",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "nightAuditPhase",
+      "doc": "The Night Audit Phase That Started or Failed or Completed",
+      "type": "string"
+    },
+    {
+      "name": "status",
+      "doc": "The previous transaction date of the hotel",
+      "type": {
+        "name": "StatusEnum",
+        "namespace": "com.marriott.mmf",
+        "type": "enum",
+        "symbols": [
+          "STARTED",
+          "FAILED",
+          "COMPLETED"
+        ]
+      }
+    },
+    {
+      "name": "oldHotelTransactionDate",
+      "doc": "The previous transaction date of the hotel",
+      "type": "string"
+    },
+    {
+      "name": "newHotelTransactionDate",
+      "doc": "The new Transaction Date for the hotel",
+      "type": "string"
+    },
+    {
+      "name": "startTimestamp",
+      "doc": "The UTC+0 timestamp when the phase started",
+      "type": "string"
+    },
+    {
+      "default": null,
+      "name": "lastErrorTimeStamp",
+      "doc": "The UTC+0 timestamp when the phase last stopped due to error.\nThis has to be present in the message for all messages for a phase on and after a failure.",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "lastRestartTimeStamp",
+      "doc": "The UTC+0 timestamp when the phase was last restarted from error state.\nThis has to be present on all messages for a phse after its restart.",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "completionTimeStamp",
+      "doc": "The UTC+0 timestamp when the phase completed.\nThis is mandatory when the status is complete.",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "lastPhaseInd",
+      "doc": "A boolean Flag indicating if the particular phase that completed is the last phase of Night Audit. This can be used to trigger processes or jobs that need to run after Hotel\u0027s Night Audit concludes.",
+      "type": "boolean"
+    }
+  ]
+}

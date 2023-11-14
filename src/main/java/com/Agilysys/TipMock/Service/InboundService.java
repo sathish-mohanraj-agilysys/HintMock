@@ -1,5 +1,7 @@
 package com.Agilysys.TipMock.Service;
 
+import com.Agilysys.TipMock.Modal.KafkaResponseDTO;
+import com.Agilysys.TipMock.Properties.ApplicationProperties;
 import com.Agilysys.TipMock.Util.AvroHelper;
 import com.Agilysys.TipMock.Util.SchemaHelper;
 import com.google.gson.JsonObject;
@@ -7,14 +9,18 @@ import com.google.gson.JsonParser;
 import org.apache.avro.Schema;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class InboundService {
@@ -24,8 +30,10 @@ public class InboundService {
     private String jsonBody;
     private String kafkaHeader;
     private AvroHelper avroHelper = new AvroHelper();
+    private AtomicReference<RecordMetadata> recordMetaData = new AtomicReference<>();
+    private Exception serializationException = null;
 
-    public String produce(String payload) throws IOException {
+    public ResponseEntity<Object> produce(String payload) throws IOException {
         //parsing the input payload
         JsonParser jsonParser = new JsonParser();
         JsonObject jsonObject = jsonParser.parse(payload).getAsJsonObject();
@@ -56,13 +64,26 @@ public class InboundService {
         producer.send(record, (metadata, exception) -> {
             if (exception == null) {
                 System.out.println("Message sent to " + metadata.topic() + " at partition " + metadata.partition() + " at Offset= " + metadata.offset());
+                recordMetaData.set(metadata);
 
             } else {
+                serializationException = exception;
                 exception.printStackTrace();
             }
         });
+        if (serializationException == null) {
+            KafkaResponseDTO kafkaResponseDTO=new KafkaResponseDTO();
+            kafkaResponseDTO.setOffset(String.valueOf(recordMetaData.get().offset()));
+            kafkaResponseDTO.setPartion(String.valueOf(recordMetaData.get().partition()));
+            kafkaResponseDTO.setTopicName(topicName);
+            kafkaResponseDTO.setMessage("Json successfully converted into Avro and posted in the Topic");
+            kafkaResponseDTO.setKafkaServer(ApplicationProperties.getProperties().getProperty("bootstrapServer").toString());
 
-        return "Message sent to kafka topic";
+            ResponseEntity<Object>kafkaResponseDTOResponseEntity=new ResponseEntity<>(kafkaResponseDTO, HttpStatus.OK);
+            return kafkaResponseDTOResponseEntity;
+        } else {
+            return new ResponseEntity<Object>("Excepiton caused ---->"+serializationException.getMessage(),HttpStatus.CONFLICT);
+        }
     }
 
 }

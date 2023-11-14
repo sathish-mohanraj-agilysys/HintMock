@@ -2,6 +2,7 @@ package com.Agilysys.TipMock.Controller;
 
 import com.Agilysys.TipMock.Service.InboundService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +15,7 @@ public class InboundController {
     InboundService inboundService;
 
     @PostMapping("/producer")
-    public String inboundProducer(@RequestBody String payload) throws IOException {
+    public ResponseEntity<Object> inboundProducer(@RequestBody String payload) throws IOException {
         return inboundService.produce(payload);
 
     }
