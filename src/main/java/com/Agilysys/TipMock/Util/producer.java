@@ -2,7 +2,6 @@ package com.Agilysys.TipMock.Util;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericDatumWriter;
-import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.BinaryEncoder;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.commons.compress.utils.IOUtils;
@@ -13,7 +12,12 @@ import tech.allegro.schema.json2avro.converter.AvroConversionException;
 import tech.allegro.schema.json2avro.converter.JsonAvroConverter;
 import tech.allegro.schema.json2avro.converter.JsonGenericRecordReader;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class producer {
