@@ -1,11 +1,8 @@
 package com.Agilysys.TipMock.Configuration;
 
-import com.Agilysys.TipMock.Properties.ApplicationProperties;
 import com.Agilysys.TipMock.Properties.KafkaProperties;
 import com.Agilysys.TipMock.Util.MultiThreadConsumer;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;

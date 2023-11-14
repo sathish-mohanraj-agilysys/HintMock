@@ -18,12 +18,10 @@ public class SchemaHelper {
     }
 
     private File fileGetter(String SchemaPath, String name) {
-        String path;
-        File file;
-        path = System.getProperty("user.dir") + "\\" + SchemaPath + "\\" + name + ".avsc";
-        file = new File(Paths.get(path).toUri());
-        if (file.exists() && file.isFile()) return file;
-        file = new File(Paths.get(System.getProperty("user.dir") + "\\TipMock\\src\\main\\resources\\" + SchemaPath + "\\" + name + ".avsc").toUri());
+            File file;
+            file =Paths.get(System.getProperty("user.dir"),"resources",SchemaPath,name+".avsc").toFile();
+            if(!file.exists())  file =Paths.get(System.getProperty("user.dir"),"src","main","resources",SchemaPath,name+".avsc").toFile();
+
         return file;
 
     }
