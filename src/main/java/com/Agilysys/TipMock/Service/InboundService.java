@@ -30,7 +30,8 @@ public class InboundService {
     private String jsonBody;
     private String kafkaHeader;
     private AvroHelper avroHelper = new AvroHelper();
-    private AtomicReference<RecordMetadata> recordMetaData = new AtomicReference<>();
+    @Autowired
+    private AtomicReference<RecordMetadata> recordMetaData;
     private Exception serializationException = null;
 
     public ResponseEntity<Object> produce(String payload) throws IOException {

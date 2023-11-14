@@ -1,6 +1,8 @@
 package com.Agilysys.TipMock.Util;
 
+import com.Agilysys.TipMock.Modal.WiremockDAO;
 import com.Agilysys.TipMock.Properties.KafkaProperties;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.avro.Schema;
@@ -16,7 +18,7 @@ import java.util.Properties;
 public class ProducerUtil {
     private AvroHelper avroHelper = new AvroHelper();
     private JsonParser jsonParser = new JsonParser();
-    public boolean produceAvro(String payload) throws IOException {
+    public boolean  produceAvro(String payload) throws IOException {
         Properties props = KafkaProperties.kafkaProducerWithAvro();
         KafkaProducer<String, byte[]> producer = new KafkaProducer<>(props);
         JsonParser jsonParser = new JsonParser();
@@ -44,6 +46,46 @@ public class ProducerUtil {
         ProducerRecord<String, byte[]> record = new ProducerRecord<>(topicName, avro);
 
         if (kafkaHeader != null) {
+            JsonParser jsonParser1 = new JsonParser();
+            JsonObject data = jsonParser1.parse(kafkaHeader).getAsJsonObject();
+            for (String key : data.getAsJsonObject().keySet()) {
+                record.headers().add(key, data.get(key).toString().getBytes());
+            }
+        }
+        producer.send(record, (metadata, exception) -> {
+            if (exception == null) {
+                System.out.println("Message sent to " + metadata.topic() + " at partition " + metadata.partition() + " at Offset= " + metadata.offset());
+
+            } else {
+                exception.printStackTrace();
+            }
+        });
+
+        return true;
+    }
+    public boolean  produceAvro(WiremockDAO wiremockDAO) throws IOException {
+        Properties props = KafkaProperties.kafkaProducerWithAvro();
+        KafkaProducer<String, byte[]> producer = new KafkaProducer<>(props);
+
+        String topicName = wiremockDAO.getTopic();
+        String jsonBody =new ObjectMapper().writeValueAsString(wiremockDAO.getPayload());
+        String kafkaHeader =new ObjectMapper().writeValueAsString(wiremockDAO.getKafkaHeader());
+
+        Schema avroSchema;
+        try {
+            avroSchema = new SchemaHelper().getInboundSchema(topicName);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //conversion of the avro data
+        InputStream inputStream = new ByteArrayInputStream(jsonBody.toString().getBytes());
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        avroHelper.convertJsonToAvro(inputStream, outputStream, avroSchema);
+        byte[] avro = outputStream.toByteArray();
+        ProducerRecord<String, byte[]> record = new ProducerRecord<>(topicName, avro);
+
+        if (kafkaHeader != null&& !kafkaHeader.equalsIgnoreCase("null")) {
             JsonParser jsonParser1 = new JsonParser();
             JsonObject data = jsonParser1.parse(kafkaHeader).getAsJsonObject();
             for (String key : data.getAsJsonObject().keySet()) {

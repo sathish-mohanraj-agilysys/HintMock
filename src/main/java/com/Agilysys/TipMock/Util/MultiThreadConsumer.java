@@ -1,5 +1,6 @@
 package com.Agilysys.TipMock.Util;
 
+import com.Agilysys.TipMock.Modal.WiremockDAO;
 import com.Agilysys.TipMock.Modal.WiremockDTO;
 import com.Agilysys.TipMock.Properties.ApplicationProperties;
 import com.Agilysys.TipMock.Properties.KafkaProperties;
@@ -16,6 +17,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -79,8 +81,8 @@ public class MultiThreadConsumer implements Runnable {
                     HttpPost request = new HttpPost(appProp.getProperty("wiremockUrl") + "/" + topicName);
 
                     WiremockDTO wiremockOut = new WiremockDTO();
-                    wiremockOut.setKafkaHeader(record.headers().toString());
-                    wiremockOut.setPayload(outputStream.toString());
+                    wiremockOut.setKafkaHeader(new JSONObject(KafkaHeader.tojson(record.headers())));
+                    wiremockOut.setPayload(new JSONObject(outputStream.toString()));
 
                     System.out.println(new Gson().toJson(wiremockOut));
                     StringEntity entity = new StringEntity(new Gson().toJson(wiremockOut));
@@ -90,12 +92,12 @@ public class MultiThreadConsumer implements Runnable {
                     HttpResponse response = httpClient.execute(request);
                     String responseBody = EntityUtils.toString(response.getEntity());
                     System.out.println("Message from the wireMock" + responseBody);
-                    WiremockDTO wiremockDTO = new ObjectMapper().readValue(responseBody, WiremockDTO.class);
+                    WiremockDAO wiremockDAO = new ObjectMapper().readValue(responseBody, WiremockDAO.class);
                    if(Boolean.valueOf(appProp.get("AvroSerialialzation").toString())) {
-                       if (wiremockDTO.getTopic() != null) producerUtil.produceAvro(responseBody);
+                       if (wiremockDAO.getTopic() != null) producerUtil.produceAvro(wiremockDAO);
                     }
                    else {
-                       if (wiremockDTO.getTopic() != null) producerUtil.produceJSON(responseBody);
+                       if (wiremockDAO.getTopic() != null) producerUtil.produceJSON(responseBody);
                    }
                 }
             } catch (Exception e) {
@@ -132,8 +134,8 @@ public class MultiThreadConsumer implements Runnable {
                     HttpPost request = new HttpPost(appProp.getProperty("wiremockUrl") + "/" + topicName);
 
                     WiremockDTO wiremockOut = new WiremockDTO();
-                    wiremockOut.setKafkaHeader(record.headers().toString());
-                    wiremockOut.setPayload(outputStream.toString());
+                    wiremockOut.setKafkaHeader(new JSONObject(record.headers().toString()));
+                    wiremockOut.setPayload(new JSONObject(outputStream.toString()));
 
                     System.out.println(new Gson().toJson(wiremockOut));
                     StringEntity entity = new StringEntity(new Gson().toJson(wiremockOut));

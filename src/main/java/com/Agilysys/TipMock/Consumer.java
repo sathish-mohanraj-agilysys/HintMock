@@ -20,6 +20,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -55,8 +56,8 @@ public class Consumer {
                     HttpPost request = new HttpPost(appProp.getProperty("wiremockUrl") + "/" + topicName);
 
                     WiremockDTO wiremockOut = new WiremockDTO();
-                    wiremockOut.setKafkaHeader(record.headers().toString());
-                    wiremockOut.setPayload(outputStream.toString());
+                    wiremockOut.setKafkaHeader(new JSONObject(record.headers().toString()));
+                    wiremockOut.setPayload(new JSONObject(outputStream.toString()));
 
                     System.out.println(new Gson().toJson(wiremockOut));
                     StringEntity entity = new StringEntity(new Gson().toJson(wiremockOut));
@@ -95,8 +96,8 @@ public class Consumer {
                     HttpClient httpClient = HttpClients.createDefault();
                     HttpPost request = new HttpPost(appProp.getProperty("wiremockUrl") + "/" + topicName);
                     WiremockDTO wiremockOut = new WiremockDTO();
-                    wiremockOut.setKafkaHeader(record.headers().toString());
-                    wiremockOut.setPayload(record.value());
+                    wiremockOut.setKafkaHeader(new JSONObject(record.headers().toString()));
+                    wiremockOut.setPayload(new JSONObject(record.value()));
                     System.out.println(new Gson().toJson(wiremockOut));
                     StringEntity entity = new StringEntity(new Gson().toJson(wiremockOut));
 
