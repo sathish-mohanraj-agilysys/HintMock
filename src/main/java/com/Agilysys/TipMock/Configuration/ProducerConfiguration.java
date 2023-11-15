@@ -19,11 +19,6 @@ public class ProducerConfiguration {
         return producer;
     }
 
-    @Bean
-    public AtomicReference<RecordMetadata> createRecordMetaData() {
-        AtomicReference<RecordMetadata> recordMetaData = new AtomicReference<RecordMetadata>();
-        return recordMetaData;
-    }
 }
 
 
