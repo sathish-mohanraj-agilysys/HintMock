@@ -1,0 +1,1401 @@
+{
+  "name": "Folio",
+  "namespace": "com.marriott.mmf",
+  "doc": "Invoice that has consolidated view of all transactions posted directly in the PMS to various account types.\nEx. Guest, Group Account - with rooms and without rooms (Catering or Function event), House Account.\nGroup Folio will be a type of Folio\nHouse Account Folio will be a type of Folio\nGuest Stay folio will be a type of Folio\nAR Folio will be a type of Folio",
+  "type": "record",
+  "fields": [
+    {
+      "name": "folioId",
+      "doc": "Unique identifier of the folio, will be used as Folio Document ID in Folio ODS.\nA composite folio identifier may also be added as a combination of Property code, PMS type, PMS folio number,Folio window ID\nand Folio Create Date to make it unique.",
+      "type": "string"
+    },
+    {
+      "name": "folioType",
+      "doc": "Type of the folio based on the owner record/account type.\nFolioType.folioTypeCode\u003d\"GS/GM/HA/AR/EOD\"\nFolioType.folioTypeDesc\u003d\"Guest Stay/Group Master/House Account/AR Master/End Of Day\"",
+      "type": {
+        "name": "FolioType",
+        "namespace": "com.marriott.mmf",
+        "type": "record",
+        "fields": [
+          {
+            "name": "folioTypeCode",
+            "doc": "Type of the folio based on the owner record/account type.",
+            "type": {
+              "name": "FolioTypeCodeEnum",
+              "namespace": "com.marriott.mmf",
+              "type": "enum",
+              "symbols": [
+                "GS",
+                "GM",
+                "HA",
+                "AR",
+                "EOD"
+              ]
+            }
+          },
+          {
+            "name": "folioTypeDesc",
+            "doc": "Folio Type Description",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "source",
+      "doc": "Source Identifier",
+      "type": "string"
+    },
+    {
+      "name": "confirmationIds",
+      "doc": "ProviderStateID is system generated confirmation number(s) of the guest stay/group reservation/house account/non-guest account associated with folio\nProviderStateID.value\u003d\"ABCD1234\"\nProviderStateID.type\u003d\"GS\"/\"GM\"/\"HA\"/\"AR\"\nProviderStateID.provider\u003d\"ACRS\"/\"PMS\"\nProviderStateID.description\u003d\"ACRS/PMS Confirmation Number\"",
+      "type": {
+        "type": "array",
+        "items": {
+          "name": "ProviderStateID",
+          "namespace": "com.marriott.mmf",
+          "type": "record",
+          "fields": [
+            {
+              "name": "id",
+              "doc": "unique identifier which can be referred elsewhere in the document",
+              "type": "string"
+            },
+            {
+              "name": "provider",
+              "doc": "Specifies the provider(system ) of this ID",
+              "type": "string"
+            },
+            {
+              "name": "value",
+              "doc": "ID value\nIf provider \u003d xPMS then Max Length \u003d 13\nIf provider \u003d ACRS then Max Length \u003d 10",
+              "type": "string"
+            },
+            {
+              "name": "type",
+              "doc": "Type of ID",
+              "type": {
+                "name": "IDTypeEnum",
+                "namespace": "com.marriott.mmf",
+                "type": "enum",
+                "symbols": [
+                  "GS",
+                  "GM",
+                  "HA",
+                  "AR",
+                  "EOD"
+                ]
+              }
+            },
+            {
+              "default": null,
+              "name": "description",
+              "doc": "Some description about the ID.\nFrom OTA.",
+              "type": [
+                "null",
+                "string"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "default": null,
+      "name": "customerId",
+      "doc": "Alternate Customer Identifier (ACID)",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "bonvoyMemberFlag",
+      "doc": "Flag to identify if guest is a bonvoy member",
+      "type": "boolean"
+    },
+    {
+      "name": "propertyCode",
+      "doc": "Marriott hotel\u0027s unique identifier",
+      "type": "string"
+    },
+    {
+      "default": null,
+      "name": "checkInAgent",
+      "doc": "The agent who checked in the entity for which this folio had been created.\nNot required pre-checkin.\nAgentInformation.agentId\u003d\"A123\"\nAgentInformation.firstName\u003d\"John\"\nAgentInformation.middleName\u003d\"Henry\"\nAgentInformation.lastName\u003d\"Taylor\"",
+      "type": [
+        "null",
+        {
+          "name": "AgentInformation",
+          "namespace": "com.marriott.mmf",
+          "type": "record",
+          "fields": [
+            {
+              "name": "agentId",
+              "doc": "Agent ID",
+              "type": "string"
+            },
+            {
+              "default": null,
+              "name": "firstName",
+              "doc": "Agent first name",
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "default": null,
+              "name": "middleName",
+              "doc": "Agent middle name",
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "name": "lastName",
+              "doc": "Agent last name",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "creationTS",
+      "doc": "Reservation creation date and time",
+      "type": "string"
+    },
+    {
+      "name": "folioNumber",
+      "doc": "PMS generated unique identifier of the folio",
+      "type": "string"
+    },
+    {
+      "name": "folioStatus",
+      "doc": "Status of the folio",
+      "type": {
+        "name": "FolioStatusEnum",
+        "namespace": "com.marriott.mmf",
+        "type": "enum",
+        "symbols": [
+          "Open",
+          "Close"
+        ]
+      }
+    },
+    {
+      "name": "folioWindowId",
+      "doc": "PMS generated unique identifier of the folio window",
+      "type": "string"
+    },
+    {
+      "default": null,
+      "name": "groupCode",
+      "doc": "CRS generated unique identifier code (also known as Group Code) for the group block",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "groupCreateTS",
+      "doc": "CRS group block create date and time",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "invoiceFlag",
+      "doc": "Invoice flag to indicate if an invoice has been generated",
+      "type": "boolean"
+    },
+    {
+      "default": null,
+      "name": "invoiceNumber",
+      "doc": "PMS generated unique identifier of the invoice",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "balance",
+      "doc": "Balance amount on the Folio",
+      "type": [
+        "null",
+        {
+          "name": "CurrencyAmount",
+          "namespace": "com.marriott.mmf",
+          "type": "record",
+          "fields": [
+            {
+              "name": "currencyCode",
+              "type": "string"
+            },
+            {
+              "name": "value",
+              "doc": "Amount Value",
+              "type": "int"
+            },
+            {
+              "default": null,
+              "name": "guestViewable",
+              "doc": "Guest Viewable\nTo identify whether to show this amount to guest.",
+              "type": [
+                "null",
+                "boolean"
+              ]
+            },
+            {
+              "name": "numberOfDecimals",
+              "doc": "Number of decimals for the currency",
+              "type": "int"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "default": null,
+      "name": "totalChargeAmt",
+      "doc": "Total debit amount posted on the folio",
+      "type": [
+        "null",
+        "com.marriott.mmf.CurrencyAmount"
+      ]
+    },
+    {
+      "default": null,
+      "name": "totalCreditAmt",
+      "doc": "Total credit amount posted on the folio",
+      "type": [
+        "null",
+        "com.marriott.mmf.CurrencyAmount"
+      ]
+    },
+    {
+      "name": "user",
+      "doc": "The user who created or updated the folio\nAgentInformation.agentId\u003d\"A123\"\nAgentInformation.firstName\u003d\"John\"\nAgentInformation.middleName\u003d\"Henry\"\nAgentInformation.lastName\u003d\"Taylor\"",
+      "type": "com.marriott.mmf.AgentInformation"
+    },
+    {
+      "default": null,
+      "name": "profileInfo",
+      "doc": "Profile Information\nProfile information of a Guest, Company etc. assigned to the folio window for billing.\nGroup Master - Profile information will be sent at the time of create, all posting for each day and at the time of folio close.\nTransient/House Account - Profile information will ONLY be sent from xPMS at the time of create and close folio.",
+      "type": [
+        "null",
+        {
+          "name": "ProfileInfo",
+          "namespace": "com.marriott.mmf",
+          "type": "record",
+          "fields": [
+            {
+              "name": "fullName",
+              "doc": "Full Name",
+              "type": "string"
+            },
+            {
+              "default": null,
+              "name": "addressLine1",
+              "doc": "Address 1",
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "default": null,
+              "name": "addressLine2",
+              "doc": "Address 2",
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "default": null,
+              "name": "city",
+              "doc": "City",
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "default": null,
+              "name": "state",
+              "doc": "State",
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "default": null,
+              "name": "zip",
+              "doc": "Zip",
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "default": null,
+              "name": "country",
+              "doc": "Country",
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "default": null,
+              "name": "iataNo",
+              "doc": "IATA",
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "default": null,
+              "name": "contactName",
+              "doc": "Contact Name",
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "default": null,
+              "name": "phoneNo",
+              "doc": "Contact Phone Number",
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "default": null,
+              "name": "emailAddress",
+              "doc": "Primary Email Address",
+              "type": [
+                "null",
+                "string"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "default": null,
+      "name": "folioCloseDate",
+      "doc": "Folio Close date and time",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "gsemBookingNumber",
+      "doc": "Gsem Booking Number (Also known as Quote Number)\nA unique identifier for the Booking",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "resState",
+      "doc": "Reservation State\nOpen - Any of the folio status of a reservation/account is Open\nClose- All of the folio of a reservation/account are closed and checked out\nReopen- When any folio of a reservation/account is reopened after all of the folio was closed",
+      "type": {
+        "name": "ResStateEnum",
+        "namespace": "com.marriott.mmf",
+        "type": "enum",
+        "symbols": [
+          "Open",
+          "Close",
+          "Reopen"
+        ]
+      }
+    },
+    {
+      "default": null,
+      "name": "resCloseDate",
+      "doc": "Reservation Close date and time",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "resReopenDate",
+      "doc": "Reservation Reopen date and time",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "folioEODSummary",
+      "doc": "FolioEODSummary is an array of summarized charge and credit amounts for open/close and group/non-group folios.\nFolio close will be included if folio is closed on a particular day (creationTS in EOD message)",
+      "type": [
+        "null",
+        {
+          "type": "array",
+          "items": {
+            "name": "FolioEODSummary",
+            "namespace": "com.marriott.mmf",
+            "type": "record",
+            "fields": [
+              {
+                "name": "folioStatus",
+                "doc": "Status of the folio",
+                "type": "com.marriott.mmf.FolioStatusEnum"
+              },
+              {
+                "default": null,
+                "name": "isGroupRes",
+                "doc": "Flag to identify if it is a group reservation",
+                "type": [
+                  "null",
+                  "boolean"
+                ]
+              },
+              {
+                "default": null,
+                "name": "totalChargeAmt",
+                "doc": "This is an array holding total charge amounts for folios (open/close) on a particular day for a property",
+                "type": [
+                  "null",
+                  {
+                    "type": "array",
+                    "items": "com.marriott.mmf.CurrencyAmount"
+                  }
+                ]
+              },
+              {
+                "default": null,
+                "name": "totalCreditAmt",
+                "doc": "This is an array holding total credit amounts for folios (open/close) on a particular day for a property",
+                "type": [
+                  "null",
+                  {
+                    "type": "array",
+                    "items": "com.marriott.mmf.CurrencyAmount"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "default": null,
+      "name": "folioTransactionDetails",
+      "doc": "Array of Folio Transactions",
+      "type": [
+        "null",
+        {
+          "type": "array",
+          "items": {
+            "name": "FolioTransactionDetail",
+            "namespace": "com.marriott.mmf",
+            "type": "record",
+            "fields": [
+              {
+                "name": "folioIdLineItemNo",
+                "doc": "Unique identifier of the FolioTransactionDetail",
+                "type": "string"
+              },
+              {
+                "name": "folioId",
+                "doc": "Unique identifier of the folio, will be used as Folio Document ID in Folio ODS.\nA composite folio identifier may also be added as a combination of Property code, PMS type, PMS folio number,Folio Window ID,\nand Folio Create Date to make it unique.",
+                "type": "string"
+              },
+              {
+                "name": "lineItemNo",
+                "doc": "Unique identifier of the folio line item. If a transaction has payment and paymentAuth details attached to it,\nthen all these sub-entities would be have same lineItemNo (unique identifier of the transaction)",
+                "type": "string"
+              },
+              {
+                "name": "transType",
+                "doc": "Type of the folio transaction.",
+                "type": {
+                  "name": "TransTypeEnum",
+                  "namespace": "com.marriott.mmf",
+                  "type": "enum",
+                  "symbols": [
+                    "NEW",
+                    "SET",
+                    "ADJ"
+                  ]
+                }
+              },
+              {
+                "name": "propertyCode",
+                "doc": "Marriott hotel\u0027s unique identifier",
+                "type": "string"
+              },
+              {
+                "name": "folioType",
+                "doc": "Type of the folio based on the owner record/account type.\nFolioType.folioTypeCode\u003d\"GS/GM/HA/AR/EOD\"\nFolioType.folioTypeDesc\u003d\"Guest Stay/Group Master/House Account/AR Master/End Of Day\"",
+                "type": "com.marriott.mmf.FolioType"
+              },
+              {
+                "name": "resState",
+                "doc": "Reservation State\nOpen - Any of the folio status of a reservation/account is Open\nClose- All of the folio of a reservation/account are closed and checked out\nReopen- When any folio of a reservation/account is reopened after all of the folio was closed",
+                "type": "com.marriott.mmf.ResStateEnum"
+              },
+              {
+                "default": null,
+                "name": "resCloseDate",
+                "doc": "Reservation Close date and time",
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              {
+                "default": null,
+                "name": "resReopenDate",
+                "doc": "Reservation Reopen date and time",
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              {
+                "default": null,
+                "name": "groupCode",
+                "doc": "CRS generated unique identifier code (also known as Group Code) for the group block\n(Also known as Block Code)",
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              {
+                "name": "confirmationIds",
+                "doc": "ProviderStateID is system generated confirmation number(s) of the guest stay/group reservation/house account/non-guest account associated with folio\nProviderStateID.value\u003d\"ABCD1234\"\nProviderStateID.type\u003d\"GS\"/\"GM\"/\"HA\"/\"AR\"\nProviderStateID.provider\u003d\"ACRS\"/\"PMS\"\nProviderStateID.description\u003d\"ACRS/PMS Confirmation Number\"",
+                "type": {
+                  "type": "array",
+                  "items": "com.marriott.mmf.ProviderStateID"
+                }
+              },
+              {
+                "default": null,
+                "name": "transLinkId",
+                "doc": "Package charge identifier",
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              {
+                "name": "chargeCode",
+                "doc": "Charge code or transaction code used to post the transaction on folio. It will be a combination of department code and sub department code",
+                "type": "string"
+              },
+              {
+                "default": null,
+                "name": "roomNumber",
+                "doc": "Room number",
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              {
+                "name": "transactionTS",
+                "doc": "Folio transaction processing date and time",
+                "type": "string"
+              },
+              {
+                "name": "businessTS",
+                "doc": "Actual system time in when folio response is created UTC\nFolio transaction processing date and time",
+                "type": "string"
+              },
+              {
+                "name": "transDesc",
+                "doc": "PMS generated Folio transaction description",
+                "type": "string"
+              },
+              {
+                "default": null,
+                "name": "transRefNo",
+                "doc": "PMS generated Folio transaction reference number",
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              {
+                "name": "transactionAmt",
+                "doc": "Folio transaction amount in property local currency",
+                "type": "com.marriott.mmf.CurrencyAmount"
+              },
+              {
+                "default": null,
+                "name": "transForexAmt",
+                "doc": "Folio transaction amount in pre-configured foreign currency",
+                "type": [
+                  "null",
+                  "com.marriott.mmf.CurrencyAmount"
+                ]
+              },
+              {
+                "default": null,
+                "name": "currExchngeRate",
+                "doc": "Exchange rate of the Transaction Posted Foreign Exchange Amount",
+                "type": [
+                  "null",
+                  "float"
+                ]
+              },
+              {
+                "default": null,
+                "name": "transPostingNotes",
+                "doc": "Folio transaction posting notes/comments",
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              {
+                "default": null,
+                "name": "transPostingSrc",
+                "doc": "Posting source of the folio transaction",
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              {
+                "name": "summarizeFlag",
+                "doc": "Flag to indicate if this transaction line item is a summary line item",
+                "type": "boolean"
+              },
+              {
+                "name": "suppressionFlag",
+                "doc": "Flag to indicate if this Folio transaction is guest visible or not i.e if this transaction line item is a combination of several charges presented as one charge or a single charge line item.\n  For future purpose, for now this flag would always be false.",
+                "type": "boolean"
+              },
+              {
+                "name": "transferFlag",
+                "doc": "Flag to indicate if this a transferred transaction line item",
+                "type": "boolean"
+              },
+              {
+                "name": "banquetChkFlag",
+                "doc": "Flag to indicate if this a banquet transaction line item",
+                "type": "boolean"
+              },
+              {
+                "default": null,
+                "name": "banquetChkRefNo",
+                "doc": "Banquet Check Reference Number",
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              {
+                "name": "posFlag",
+                "doc": "To identify if transaction originated in the POS",
+                "type": "boolean"
+              },
+              {
+                "default": null,
+                "name": "postedBy",
+                "doc": "Unique identifier of user/system posted the folio transaction\nAgentInformation.agentId\u003d\"A123\"\nAgentInformation.firstName\u003d\"John\"\nAgentInformation.middleName\u003d\"Henry\"\nAgentInformation.lastName\u003d\"Taylor\"",
+                "type": [
+                  "null",
+                  "com.marriott.mmf.AgentInformation"
+                ]
+              },
+              {
+                "default": null,
+                "name": "taxInclusive",
+                "doc": "This indicates if tax is bundled into the charge amount. \nThe charge and tax will always be sent separately regardless if this indicator is True or False.",
+                "type": [
+                  "null",
+                  "boolean"
+                ]
+              },
+              {
+                "default": null,
+                "name": "chargeTaxLinkId",
+                "doc": "This is the LineItemNo linked to the associated base charge to indicate any applicable tax postings.",
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              {
+                "default": null,
+                "name": "folioTransPaymentDetails",
+                "doc": "Array of folio payment details",
+                "type": [
+                  "null",
+                  {
+                    "type": "array",
+                    "items": {
+                      "name": "FolioTransactionPaymentDetail",
+                      "namespace": "com.marriott.mmf",
+                      "type": "record",
+                      "fields": [
+                        {
+                          "name": "pmtSeqNum",
+                          "doc": "Payment sequence number , unique identifier of the transaction payments.",
+                          "type": "string"
+                        },
+                        {
+                          "name": "lineItemNo",
+                          "doc": "Unique identifier of the folio line item",
+                          "type": "string"
+                        },
+                        {
+                          "name": "pmtInstCode",
+                          "doc": "Payment instrument code",
+                          "type": {
+                            "name": "PmtInstCodeEnum",
+                            "namespace": "com.marriott.mmf",
+                            "type": "enum",
+                            "symbols": [
+                              "CA",
+                              "CC",
+                              "CK",
+                              "DB",
+                              "VC",
+                              "MR",
+                              "GC"
+                            ]
+                          }
+                        },
+                        {
+                          "default": null,
+                          "name": "ccTypeCode",
+                          "doc": "Credit card types",
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        {
+                          "name": "paymentAmt",
+                          "doc": "Payment amount",
+                          "type": "com.marriott.mmf.CurrencyAmount"
+                        },
+                        {
+                          "name": "paymentTS",
+                          "doc": "Payment transaction processing date",
+                          "type": "string"
+                        },
+                        {
+                          "default": null,
+                          "name": "cardHolderName",
+                          "doc": "Card holder account name",
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        {
+                          "default": null,
+                          "name": "cardAcctNo",
+                          "doc": "Tokenized Card Account Number",
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        {
+                          "default": null,
+                          "name": "expireDate",
+                          "doc": "Credit card expiration date",
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        {
+                          "default": null,
+                          "name": "pmtTerminalId",
+                          "doc": "Payment terminal identifier",
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        {
+                          "default": null,
+                          "name": "loyaltyRedeemTransId",
+                          "doc": "Loyalty redemption transaction identifier",
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        {
+                          "default": null,
+                          "name": "retailBankChkTS",
+                          "doc": "Retail check date and time",
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        {
+                          "default": null,
+                          "name": "retailBankChkNo",
+                          "doc": "Retail check number",
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        {
+                          "default": null,
+                          "name": "directBillNo",
+                          "doc": "PMS direct bill identifier/PeopleSoft AR No. which PMS will get from BTR",
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        {
+                          "default": null,
+                          "name": "acctReceivableId",
+                          "doc": "PMS AR number",
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        {
+                          "default": null,
+                          "name": "voucher",
+                          "doc": "Voucher Entity",
+                          "type": [
+                            "null",
+                            {
+                              "name": "Voucher",
+                              "namespace": "com.marriott.mmf",
+                              "type": "record",
+                              "fields": [
+                                {
+                                  "default": null,
+                                  "name": "pmtSeqNo",
+                                  "doc": "Payment sequence number\nID for this document",
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                {
+                                  "name": "lineItemNo",
+                                  "doc": "LineItemNo",
+                                  "type": "string"
+                                },
+                                {
+                                  "name": "voucherType",
+                                  "doc": "Indicate voucher Type",
+                                  "type": "string"
+                                },
+                                {
+                                  "name": "segmentIDRef",
+                                  "doc": "ID of the segment the form of payment belongs to",
+                                  "type": "string"
+                                },
+                                {
+                                  "name": "paymentTypeCodeInfo",
+                                  "doc": "contains payment info\nPaymentInstrument.pmtInstCode\u003d\"CA/CC/CK/DB/VC/MR/GC\"\nPaymentInstrument.pmtInstName\u003d\"Cash/Credit Card/Check/Direct Bill/Voucher/Marriott Rewards/ Marriott Gift Card\"",
+                                  "type": {
+                                    "name": "PaymentInstrument",
+                                    "namespace": "com.marriott.mmf",
+                                    "type": "record",
+                                    "fields": [
+                                      {
+                                        "name": "pmtInstCode",
+                                        "doc": "Payment instrument code",
+                                        "type": "com.marriott.mmf.PmtInstCodeEnum"
+                                      },
+                                      {
+                                        "name": "pmtInstName",
+                                        "doc": "Payment instrument Name",
+                                        "type": {
+                                          "name": "PmtInstNameEnum",
+                                          "namespace": "com.marriott.mmf",
+                                          "type": "enum",
+                                          "symbols": [
+                                            "Cash",
+                                            "CreditCard",
+                                            "Check",
+                                            "DirectBill",
+                                            "Voucher",
+                                            "MarriottRewards",
+                                            "MarriottGiftCard"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "default": null,
+                                        "name": "pmtInstDesc",
+                                        "doc": "Payment instrument description",
+                                        "type": [
+                                          "null",
+                                          "string"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "default": null,
+                                  "name": "remark",
+                                  "doc": "Remark",
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                {
+                                  "default": null,
+                                  "name": "privacy",
+                                  "doc": "Traveler\u0027s consent to share details\nPrivacy.optInStatusInd\u003dtrue",
+                                  "type": [
+                                    "null",
+                                    {
+                                      "name": "Privacy",
+                                      "namespace": "com.marriott.mmf",
+                                      "type": "record",
+                                      "fields": [
+                                        {
+                                          "name": "optInStatusInd",
+                                          "doc": "True - Guest has given consent \nFalse - Guest didn\u0027t give consent",
+                                          "type": "boolean"
+                                        },
+                                        {
+                                          "default": null,
+                                          "name": "optInDate",
+                                          "doc": "Date \u0026 Time of OptIn",
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        {
+                                          "default": null,
+                                          "name": "optOutDate",
+                                          "doc": "Date \u0026 Time of OptOut",
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "name": "payer",
+                                  "doc": "describe the payer of this payment object\nPayerInformation.payerId\u003d\"TVL001\"\nPayerInformation.payerTypeEnum\u003d\"Guest\"",
+                                  "type": {
+                                    "name": "PayerInformation",
+                                    "namespace": "com.marriott.mmf",
+                                    "type": "record",
+                                    "fields": [
+                                      {
+                                        "default": null,
+                                        "name": "payerId",
+                                        "doc": "Identifies a guest within the reservation which will be the payer of this payment object. This id cross reference a Traveler. It is only set when payerType is set to Guest",
+                                        "type": [
+                                          "null",
+                                          "string"
+                                        ]
+                                      },
+                                      {
+                                        "name": "payerTypeEnum",
+                                        "doc": "Full name of company",
+                                        "type": {
+                                          "name": "PayerTypeEnum",
+                                          "namespace": "com.marriott.mmf",
+                                          "type": "enum",
+                                          "symbols": [
+                                            "Guest",
+                                            "CorporateAccount"
+                                          ]
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "name": "seriesCode",
+                                  "doc": "SeriesCode will be used to store voucher number and it should be tokenized",
+                                  "type": "string"
+                                },
+                                {
+                                  "default": null,
+                                  "name": "effectiveDate",
+                                  "doc": "Indicates the starting date.",
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                {
+                                  "default": null,
+                                  "name": "expireDate",
+                                  "doc": "Indicates the ending date.",
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                {
+                                  "default": null,
+                                  "name": "billingNumber",
+                                  "doc": "Reference of the billing account which handles the payment transaction",
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                {
+                                  "default": null,
+                                  "name": "supplierIdentifier",
+                                  "doc": "Unique identifier of the electronic voucher, created by the supplier",
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                {
+                                  "default": null,
+                                  "name": "identifier",
+                                  "doc": "Unique identifier of the electronic voucher.",
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                {
+                                  "default": null,
+                                  "name": "valueType",
+                                  "doc": "Defines the type of voucher (e.g. full credit or partial credit)",
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                {
+                                  "default": null,
+                                  "name": "url",
+                                  "doc": "Uri of the creating system. The URI should be an URL and be globally unique. Should only be omitted when the context is clearly implied for the containing document.",
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                {
+                                  "default": null,
+                                  "name": "system",
+                                  "doc": "Name or identifier for the creating system",
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                {
+                                  "default": null,
+                                  "name": "organization",
+                                  "doc": "Name of the company manages the reference system",
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                {
+                                  "default": null,
+                                  "name": "groupDaysApplyInd",
+                                  "doc": "When true, specifies the Group Days Apply Value can be used for this Voucher Billing Account.  This indicator is used to allow the usage of a car rental days voucher when part of an inclusive tour.",
+                                  "type": [
+                                    "null",
+                                    "boolean"
+                                  ]
+                                },
+                                {
+                                  "default": null,
+                                  "name": "expireDateExclusiveInd",
+                                  "doc": "When true, indicates that the ExpireDate is the first day after the applicable period (e.g. when expire date is Oct 15  the last date of the period is Oct 14).",
+                                  "type": [
+                                    "null",
+                                    "boolean"
+                                  ]
+                                },
+                                {
+                                  "name": "electronicInd",
+                                  "doc": "ElectronicInd",
+                                  "type": "boolean"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "default": null,
+                          "name": "folioPaymentAuthDetails",
+                          "doc": "Array of folio Payment Authorization details",
+                          "type": [
+                            "null",
+                            {
+                              "type": "array",
+                              "items": {
+                                "name": "FolioPaymentAuthDetail",
+                                "namespace": "com.marriott.mmf",
+                                "type": "record",
+                                "fields": [
+                                  {
+                                    "name": "lineItemNo",
+                                    "doc": "Unique identifier of the folio line item.",
+                                    "type": "string"
+                                  },
+                                  {
+                                    "name": "pmtSeqNo",
+                                    "doc": "Payment sequence number",
+                                    "type": "string"
+                                  },
+                                  {
+                                    "name": "authSeqNo",
+                                    "doc": "Authorization sequence number",
+                                    "type": "string"
+                                  },
+                                  {
+                                    "name": "cardAuthTS",
+                                    "doc": "Credit Card authorization date and time",
+                                    "type": "string"
+                                  },
+                                  {
+                                    "name": "authCode",
+                                    "doc": "Credit card authorization code",
+                                    "type": "string"
+                                  },
+                                  {
+                                    "default": null,
+                                    "name": "authRefNo",
+                                    "doc": "External card authorization reference number",
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  {
+                                    "default": null,
+                                    "name": "authSrc",
+                                    "doc": "Card authorization source",
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  {
+                                    "name": "authAmt",
+                                    "doc": "Amount authorized for the card payment transaction",
+                                    "type": "com.marriott.mmf.CurrencyAmount"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "default": null,
+                          "name": "paymentInstrument",
+                          "doc": "Payment Instrument Entity\nPaymentInstrument.pmtInstCode\u003d\"CA/CC/CK/DB/VC/MR/GC\"\nPaymentInstrument.pmtInstName\u003d\"Cash/Credit Card/Check/Direct Bill/Voucher/Marriott Rewards/ Marriott Gift Card\"",
+                          "type": [
+                            "null",
+                            "com.marriott.mmf.PaymentInstrument"
+                          ]
+                        },
+                        {
+                          "default": null,
+                          "name": "creditCardType",
+                          "doc": "Credit Card Type Entity\nCreditCardType.ccTypeCode\u003d\"AX/DC/DS/GC/JC/MC/VS/UP\"\nCreditCardType.ccTypeName\u003d\"VISA\"",
+                          "type": [
+                            "null",
+                            {
+                              "name": "CreditCardType",
+                              "namespace": "com.marriott.mmf",
+                              "type": "record",
+                              "fields": [
+                                {
+                                  "name": "ccTypeCode",
+                                  "doc": "Credit Card Type Code",
+                                  "type": "string"
+                                },
+                                {
+                                  "name": "ccTypeName",
+                                  "doc": "Credit Card Type Name",
+                                  "type": "string"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "default": null,
+                "name": "folioTransferDetails",
+                "doc": "Array of folio transfer details",
+                "type": [
+                  "null",
+                  {
+                    "type": "array",
+                    "items": {
+                      "name": "FolioTransfer",
+                      "namespace": "com.marriott.mmf",
+                      "type": "record",
+                      "fields": [
+                        {
+                          "name": "transferTS",
+                          "doc": "Folio transaction transfer date and time.",
+                          "type": "string"
+                        },
+                        {
+                          "name": "trnsfrFromfolioId",
+                          "doc": "FolioID from where the transaction has been transferred",
+                          "type": "string"
+                        },
+                        {
+                          "name": "trnsfrFromLineItemNo",
+                          "doc": "Unique identifier of the folio line item from where the transaction has been transferred",
+                          "type": "string"
+                        },
+                        {
+                          "default": null,
+                          "name": "trnsfrFromConfIds",
+                          "doc": "System generated confirmation number(s) of the guest stay/group reservation/house account/non-guest where the transaction has been transferred from various systems.\nProviderStateID.value\u003d\"ABCD1234\"\nProviderStateID.type\u003d\"GS\"/\"GM\"/\"HA\"/\"AR\"\nProviderStateID.provider\u003d\"ACRS\"/\"PMS\"\nProviderStateID.description\u003d\"ACRS/PMS Confirmation Number\"",
+                          "type": [
+                            "null",
+                            {
+                              "type": "array",
+                              "items": "com.marriott.mmf.ProviderStateID"
+                            }
+                          ]
+                        },
+                        {
+                          "name": "trnsfrFromPropCode",
+                          "doc": "Marriott hotel\u0027s unique identifier from where the transaction has been transferred",
+                          "type": "string"
+                        },
+                        {
+                          "default": null,
+                          "name": "trnsfrFromRoomNo",
+                          "doc": "Room number from where the transaction has been transferred",
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        {
+                          "name": "trnsfrToFolioId",
+                          "doc": "FolioID to which the transaction has been transferred",
+                          "type": "string"
+                        },
+                        {
+                          "name": "trnsfrToLineItemNo",
+                          "doc": "Unique identifier of the folio line item to which the transaction has been transferred",
+                          "type": "string"
+                        },
+                        {
+                          "default": null,
+                          "name": "trnsfrToConfIds",
+                          "doc": "System generated confirmation number(s) of the guest stay/group reservation/house account/non-guest where the transaction has been transferred to.\nProviderStateID.value\u003d\"ABCD1234\"\nProviderStateID.type\u003d\"GS\"/\"GM\"/\"HA\"/\"AR\"\nProviderStateID.provider\u003d\"ACRS\"/\"PMS\"\nProviderStateID.description\u003d\"ACRS/PMS Confirmation Number\"",
+                          "type": [
+                            "null",
+                            {
+                              "type": "array",
+                              "items": "com.marriott.mmf.ProviderStateID"
+                            }
+                          ]
+                        },
+                        {
+                          "name": "trnsfrToPropCode",
+                          "doc": "Marriott hotel\u0027s unique identifier to which the transaction has been transferred",
+                          "type": "string"
+                        },
+                        {
+                          "default": null,
+                          "name": "trnsfrToRoomNo",
+                          "doc": "Room number to which the transaction has been transferred",
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        {
+                          "default": null,
+                          "name": "trnsfrByUser",
+                          "doc": "User/system that transferred the folio transaction\nAgentInformation.agentId\u003d\"A123\"\nAgentInformation.firstName\u003d\"John\"\nAgentInformation.middleName\u003d\"Henry\"\nAgentInformation.lastName\u003d\"Taylor\"",
+                          "type": [
+                            "null",
+                            "com.marriott.mmf.AgentInformation"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "revenueType",
+                "doc": "This entity will store details on the revenue/charge posted.\nGrouping of charge codes. Ex. All room/banquet charges will fall into one revenue, catering charges will fall into other revenue.\nRevenueType.revenueTypeCode\u003d\"RBCA\"\nRevenueType.revenueTypeCodeDesc\u003d\"Room Charge-Bus Trans\"\nRevenueType.revenueTypeCodeParent\u003d\"Room Revenue\"",
+                "type": {
+                  "name": "RevenueType",
+                  "namespace": "com.marriott.mmf",
+                  "type": "record",
+                  "fields": [
+                    {
+                      "name": "revenueTypeCode",
+                      "doc": "Revenue Type Code",
+                      "type": "string"
+                    },
+                    {
+                      "name": "revenueTypeCodeDesc",
+                      "doc": "Revenue Type Description",
+                      "type": "string"
+                    },
+                    {
+                      "default": null,
+                      "name": "revenueTypeCodeParent",
+                      "doc": "Parent Revenue Type Code",
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "version": "1.0.0"
+}

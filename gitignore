@@ -1,0 +1,54 @@
+# Directory Artifacts to ignore`
+
+bin/
+build/
+target/
+.idea/
+test-output/
+#Binary dependencies
+/External
+/HTNG
+pms/
+pmsqa/
+
+# Java Specific Git Ignore
+*.class
+
+# Package Files
+# If you  really need to add a .jar file, use "git add -f"
+*.jar
+*.war
+*.ear
+
+# Editor droppings + misc
+*~
+*.lock
+*.swp
+*.out
+*.log
+*.bak
+*.orig
+*.iml
+*.csv
+
+# You should not need to add additional ignores for anything under .metadata.
+# as the entry below should ignore the entire directory.
+.metadata
+Servers
+logs
+
+#project files
+*.project
+.project
+*.classpath
+.classpath
+.settings/
+.springBeans
+.factorypath
+
+#generated files
+src/test/resources/testngRetry.xml
+src/test/resources/testngRetry1.xml
+src/test/resources/testngRetry2.xml
+testStartTime.txt
+*.pptx

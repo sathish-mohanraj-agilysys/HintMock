@@ -26,19 +26,19 @@ import java.util.Collections;
 import java.util.Properties;
 
 public class MultiThreadConsumer implements Runnable {
-    private String topic;
+    private String topicName;
     private KafkaConsumer<String, byte[]> consumer;
     private Boolean avroSerialization;
 
     public MultiThreadConsumer(String topic) {
-        this.topic = topic;
+        this.topicName = topic;
         Properties props = KafkaProperties.kafkaConsumerWithAvro();
         consumer = new KafkaConsumer<>(props);
 
     }
 
     public MultiThreadConsumer(String topic, KafkaConsumer consumer, boolean avroSerialization) {
-        this.topic = topic;
+        this.topicName = topic;
         this.consumer = consumer;
         this.avroSerialization = avroSerialization;
 
@@ -47,7 +47,7 @@ public class MultiThreadConsumer implements Runnable {
 
     @Override
     public void run() {
-        consumer.subscribe(Collections.singletonList(topic));
+        consumer.subscribe(Collections.singletonList(topicName));
         if (avroSerialization) {
             startAvro();
         } else {
@@ -61,7 +61,6 @@ public class MultiThreadConsumer implements Runnable {
         // Create a Kafka producer
         KafkaProducer<String, byte[]> producer = new KafkaProducer<>(kafkaProp);
         ProducerUtil producerUtil = new ProducerUtil();
-        String topicName = "hotel-ops.property-financials.pms-agilysys.night-audit-events";
         Properties props = KafkaProperties.kafkaConsumerWithAvro();
         KafkaConsumer<String, byte[]> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Collections.singletonList(topicName));
@@ -74,7 +73,7 @@ public class MultiThreadConsumer implements Runnable {
                     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                     ByteArrayInputStream inputStream = new ByteArrayInputStream(record.value());
                     AvroHelper avroHelper = new AvroHelper();
-                    Schema avroSchema = new SchemaHelper().getInboundSchema(topicName);
+                    Schema avroSchema = new SchemaHelper().getOutboundSchema(topicName);
                     avroHelper.convertAvroToJson(inputStream, outputStream, avroSchema);
                     System.out.printf("Offset = %d, Key = %s, Value = %s%n", record.offset(), record.key(), outputStream.toString());
                     HttpClient httpClient = HttpClients.createDefault();
