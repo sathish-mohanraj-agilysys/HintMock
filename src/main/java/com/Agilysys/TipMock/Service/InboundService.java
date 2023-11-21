@@ -10,7 +10,6 @@ import org.apache.avro.Schema;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.common.TopicPartition;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class InboundService {
@@ -34,7 +32,7 @@ public class InboundService {
     private String kafkaHeader;
     private AvroHelper avroHelper = new AvroHelper();
 
-    private  Future<RecordMetadata> recordMetaData;
+    private Future<RecordMetadata> recordMetaData;
     private Exception serializationException = null;
 
     public ResponseEntity<Object> produce(String payload) throws IOException {
@@ -75,7 +73,7 @@ public class InboundService {
             }
         });
         if (serializationException == null) {
-            KafkaResponseDTO kafkaResponseDTO=new KafkaResponseDTO();
+            KafkaResponseDTO kafkaResponseDTO = new KafkaResponseDTO();
             try {
                 kafkaResponseDTO.setOffset(String.valueOf(recordMetaData.get().offset()));
                 kafkaResponseDTO.setPartion(String.valueOf(recordMetaData.get().partition()));
@@ -89,10 +87,10 @@ public class InboundService {
             kafkaResponseDTO.setMessage("Json successfully converted into Avro and posted in the Topic");
             kafkaResponseDTO.setKafkaServer(ApplicationProperties.getProperties().getProperty("bootstrapServer").toString());
 
-            ResponseEntity<Object>kafkaResponseDTOResponseEntity=new ResponseEntity<>(kafkaResponseDTO, HttpStatus.OK);
+            ResponseEntity<Object> kafkaResponseDTOResponseEntity = new ResponseEntity<>(kafkaResponseDTO, HttpStatus.OK);
             return kafkaResponseDTOResponseEntity;
         } else {
-            return new ResponseEntity<Object>("Excepiton caused ---->"+serializationException.getMessage(),HttpStatus.CONFLICT);
+            return new ResponseEntity<Object>("Excepiton caused ---->" + serializationException.getMessage(), HttpStatus.CONFLICT);
         }
     }
 

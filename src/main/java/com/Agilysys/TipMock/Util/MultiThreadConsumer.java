@@ -83,8 +83,8 @@ public class MultiThreadConsumer implements Runnable {
                     wiremockOut.setKafkaHeader(new JSONObject(KafkaHeader.tojson(record.headers())));
                     wiremockOut.setPayload(new JSONObject(outputStream.toString()));
 
-                    System.out.println(new Gson().toJson(wiremockOut));
-                    StringEntity entity = new StringEntity(new Gson().toJson(wiremockOut));
+                    System.out.println(wiremockOut.toJsonString());
+                    StringEntity entity = new StringEntity(wiremockOut.toJsonString());
 
                     entity.setContentType("application/json");
                     request.setEntity(entity);
@@ -136,8 +136,8 @@ public class MultiThreadConsumer implements Runnable {
                     wiremockOut.setKafkaHeader(new JSONObject(record.headers().toString()));
                     wiremockOut.setPayload(new JSONObject(outputStream.toString()));
 
-                    System.out.println(new Gson().toJson(wiremockOut));
-                    StringEntity entity = new StringEntity(new Gson().toJson(wiremockOut));
+                    System.out.println(wiremockOut.toJsonString());
+                    StringEntity entity = new StringEntity(wiremockOut.toJsonString());
 
                     entity.setContentType("application/json");
                     request.setEntity(entity);

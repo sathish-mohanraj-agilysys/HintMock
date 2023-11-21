@@ -15,4 +15,12 @@ public class WiremockDTO {
     JSONObject kafkaHeader;
     String schema;
     String topic;
+    public String toJsonString() {
+        JSONObject json = new JSONObject();
+        json.put("payload", payload);
+        json.put("kafkaHeader", kafkaHeader);
+        json.put("schema", schema);
+        json.put("topic", topic);
+        return json.toString();
+    }
 }
